@@ -1,0 +1,56 @@
+# Demo configuration for the docker compose deployment.
+server:
+  addr: ":8080"
+
+database:
+  dsn: ""   # overridden by DATABASE_URL in docker-compose.yaml
+
+ground:
+  clay_top_depth: 12.0
+
+grid:
+  origin: [0, 0]
+  spacing: [2.0, 2.0]
+  count: [111, 41]
+
+allowable:
+  default: 60.0
+  zones:
+    # Soft strip between blocks A and B: the clay is weakest there.
+    - rect: [60, 10, 100, 50]
+      value: 25.0
+
+discretization:
+  max_cell: 3.0
+  cutoff: 1.0e-6
+
+engine:
+  tile_size: 8
+  snapshot_interval: 1000
+  top_k: 5
+
+blocks:
+  - id: A
+    origin_x: 10
+    origin_y: 10
+    bays: 6
+    rows: 4
+    bay_width: 12.5
+    row_width: 3.0
+    max_tiers: 5
+  - id: B
+    origin_x: 90
+    origin_y: 10
+    bays: 6
+    rows: 4
+    bay_width: 12.5
+    row_width: 3.0
+    max_tiers: 5
+  - id: C
+    origin_x: 10
+    origin_y: 55
+    bays: 4
+    rows: 3
+    bay_width: 12.5
+    row_width: 3.0
+    max_tiers: 4
