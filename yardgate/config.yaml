@@ -1,0 +1,78 @@
+# Yard stress-gate service configuration.
+server:
+  addr: ":8080"
+
+database:
+  url: "postgres://yard:yard@db:5432/yardgate?sslmode=disable"
+
+ground:
+  # Depth of the silty-clay layer top surface below the yard surface (m).
+  # This is the checkpoint depth; it must be positive.
+  clay_top_depth_m: 12.0
+
+discretization:
+  # Rectangular slot loads are integrated by point-load superposition.
+  # Near the load the footprint is subdivided into cells of at most this
+  # size (m); beyond far_field_factor x slot diagonal a single equivalent
+  # point load is used. Contributions below cutoff_kpa are neglected.
+  max_cell_size_m: 1.0
+  far_field_factor: 4.0
+  cutoff_kpa: 0.000001
+
+checkpoints:
+  # Regular checkpoint mesh on the clay top surface; may span several blocks.
+  origin_x: 0.0
+  origin_y: 0.0
+  spacing_x: 5.0
+  spacing_y: 5.0
+  count_x: 40
+  count_y: 20
+
+allowance:
+  # Allowable additional vertical stress (kPa) on the clay top surface.
+  # The first zone containing a checkpoint wins; otherwise the default.
+  default_kpa: 40.0
+  zones:
+    - name: soft-corner
+      min_x: 0.0
+      min_y: 0.0
+      max_x: 110.0
+      max_y: 70.0
+      allowance_kpa: 25.0
+
+yard:
+  # Container blocks; slot (bay i, row j) sits at
+  # origin + (i+0.5)*bay_width, (j+0.5)*row_width.
+  blocks:
+    - id: A
+      origin_x: 20.0
+      origin_y: 20.0
+      bays: 12
+      rows: 6
+      bay_width: 6.5
+      row_width: 2.6
+      max_tiers: 5
+    - id: B
+      origin_x: 20.0
+      origin_y: 45.0
+      bays: 12
+      rows: 6
+      bay_width: 6.5
+      row_width: 2.6
+      max_tiers: 5
+    - id: C
+      origin_x: 130.0
+      origin_y: 20.0
+      bays: 12
+      rows: 6
+      bay_width: 6.5
+      row_width: 2.6
+      max_tiers: 5
+
+snapshot:
+  # A state snapshot is stored every this many effective events.
+  interval_events: 1000
+
+limits:
+  # How many of the worst violating checkpoints a rejection returns.
+  top_violations: 5
